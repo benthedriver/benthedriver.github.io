@@ -1,52 +1,154 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fresh Market Grocery</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <header>
-    <h1>Fresh Market Grocery</h1>
-    <p>Fresh produce for just $1/lb!</p>
-  </header>
+import { useState } from "react";
+import { ShoppingCart } from "lucide-react";
 
-  <main class="product-grid">
-    <div class="product">
-      <img src="https://example.com/images/onions.jpg" alt="Onions">
-      <h2>Onions</h2>
-      <p>$1.00 / lb</p>
-    <body>
-  <h1>Welcome to Fresh Market</h1>
+const products = [
+  { id: 1, name: "Onions", price: 1, image: "https://cdn.pixabay.com/photo/2014/10/19/20/59/vegetable-499083_1280.jpg" },
+  { id: 2, name: "Tomatoes", price: 1, image: "https://cdn.pixabay.com/photo/2016/02/19/11/19/tomatoes-1205699_1280.jpg" },
+  { id: 3, name: "Garlic", price: 1, image: "https://cdn.pixabay.com/photo/2018/01/26/09/48/garlic-3101862_1280.jpg" },
+  { id: 4, name: "Potatoes", price: 1, image: "https://cdn.pixabay.com/photo/2022/03/13/12/32/potatoes-7065250_1280.jpg" },
+  { id: 5, name: "Chilies", price: 1, image: "https://cdn.pixabay.com/photo/2014/10/19/20/58/chili-499062_1280.jpg" },
+];
 
-  <!-- Add your product cards below -->
-  <div class="product">
-    <img src="https://images.pexels.com/photos/12523422/pexels-photo-12523422.jpeg" alt="Tomatoes" style="width:100%; max-width:200px; border-radius:8px;">
-    <h2>Tomatoes</h2>
-    <p>$1.00 / lb</p>
-  </div>
+export default function GroceryStore() {
+  const [cart, setCart] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [orderSubmitted, setOrderSubmitted] = useState(false);
+  const [formData, setFormData] = useState({ name: "", address: "", phone: "" });
 
-</body>
-    <div class="product">
-      <img src="https://example.com/images/garlic.jpg" alt="Garlic">
-      <h2>Garlic</h2>
-      <p>$1.00 / lb</p>
+  const addToCart = (product) => {
+    setCart((prev) => [...prev, product]);
+  };
+
+  const removeFromCart = (product) => {
+    setCart((prev) => prev.filter((p, i) => i !== prev.indexOf(product)));
+  };
+
+  const handleOrderSubmit = (e) => {
+    e.preventDefault();
+    setOrderSubmitted(true);
+    setShowForm(false);
+    setCart([]);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-10">
+        <h1 className="text-2xl font-bold">My Grocery</h1>
+        <div className="flex items-center gap-4">
+          <input
+            type="text"
+            placeholder="Search..."
+            className="border rounded px-2 py-1"
+          />
+          <div className="relative">
+            <ShoppingCart className="w-6 h-6" />
+            {cart.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
+                {cart.length}
+              </span>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Banner */}
+      <section className="bg-green-100 text-center py-6 px-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-green-800 mb-2">Order Here & Get It Delivered to Your Door</h2>
+        <p className="text-green-700 text-lg">Fresh produce, fast delivery, and unbeatable convenience.</p>
+      </section>
+
+      {/* Products */}
+      <main className="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {products.map((product) => (
+          <div
+            key={product.id}
+            className="bg-white rounded-2xl shadow p-4 flex flex-col items-center"
+          >
+            <img src={product.image} alt={product.name} className="w-32 h-32 object-cover mb-4 rounded-full" />
+            <h2 className="text-lg font-semibold mb-1">{product.name}</h2>
+            <p className="text-gray-600 mb-2">${product.price.toFixed(2)} / lb</p>
+            <button
+              onClick={() => addToCart(product)}
+              className="bg-green-500 text-white rounded-xl px-4 py-2 hover:bg-green-600"
+            >
+              Add to Cart
+            </button>
+          </div>
+        ))}
+      </main>
+
+      {/* Cart Section */}
+      {cart.length > 0 && (
+        <section className="p-4">
+          <h2 className="text-xl font-semibold mb-2">Cart</h2>
+          <ul className="bg-white rounded shadow p-4 mb-4">
+            {cart.map((item, index) => (
+              <li key={index} className="flex justify-between mb-2">
+                <span>{item.name}</span>
+                <button
+                  onClick={() => removeFromCart(item)}
+                  className="text-red-500 hover:underline"
+                >
+                  Remove
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            onClick={() => setShowForm(true)}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Place Order
+          </button>
+        </section>
+      )}
+
+      {/* Order Form */}
+      {showForm && (
+        <section className="p-4 bg-white shadow rounded max-w-md mx-auto">
+          <h2 className="text-lg font-semibold mb-4">Enter Your Information</h2>
+          <form onSubmit={handleOrderSubmit} className="space-y-4">
+            <input
+              type="text"
+              placeholder="Your Name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full border rounded px-3 py-2"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Phone Number"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              className="w-full border rounded px-3 py-2"
+              required
+            />
+            <textarea
+              placeholder="Delivery Address"
+              value={formData.address}
+              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              className="w-full border rounded px-3 py-2"
+              required
+            ></textarea>
+            <button
+              type="submit"
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+            >
+              Submit Order
+            </button>
+          </form>
+        </section>
+      )}
+
+      {/* Confirmation Message */}
+      {orderSubmitted && (
+        <section className="p-4 text-center">
+          <h2 className="text-2xl font-semibold text-green-700 mb-2">Thank you for your order!</h2>
+          <p>We will contact you soon to confirm your delivery.</p>
+        </section>
+      )}
     </div>
-    <div class="product">
-      <img src="https://example.com/images/potatoes.jpg" alt="Potatoes">
-      <h2>Potatoes</h2>
-      <p>$1.00 / lb</p>
-    </div>
-    <div class="product">
-      <img src="https://example.com/images/chilies.jpg" alt="Chilies">
-      <h2>Chilies</h2>
-      <p>$1.00 / lb</p>
-    </div>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 Fresh Market Grocery</p>
-  </footer>
-</body>
-</html>
+  );
+}
