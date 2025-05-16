@@ -2,18 +2,15 @@ import { useState } from "react";
 import { ShoppingCart } from "lucide-react";
 
 const products = [
-  { id: 1, name: "Onions", price: 1, image: "https://cdn.pixabay.com/photo/2014/10/19/20/59/vegetable-499083_1280.jpg" },
-  { id: 2, name: "Tomatoes", price: 1, image: "https://cdn.pixabay.com/photo/2016/02/19/11/19/tomatoes-1205699_1280.jpg" },
-  { id: 3, name: "Garlic", price: 1, image: "https://cdn.pixabay.com/photo/2018/01/26/09/48/garlic-3101862_1280.jpg" },
-  { id: 4, name: "Potatoes", price: 1, image: "https://cdn.pixabay.com/photo/2022/03/13/12/32/potatoes-7065250_1280.jpg" },
-  { id: 5, name: "Chilies", price: 1, image: "https://cdn.pixabay.com/photo/2014/10/19/20/58/chili-499062_1280.jpg" },
+  { id: 1, name: "Onions", price: 1, image: "https://cdn.pixabay.com/photo/2018/02/21/14/32/onion-3127137_1280.jpg" },
+  { id: 2, name: "Tomatoes", price: 1, image: "https://cdn.pixabay.com/photo/2023/07/16/20/50/tomatoes-7433786_1280.jpg" },
+  { id: 3, name: "Garlic", price: 1, image: "https://cdn.pixabay.com/photo/2014/11/28/01/01/garlic-545223_1280.jpg" },
+  { id: 4, name: "Potatoes", price: 1, image: "https://cdn.pixabay.com/illustrations/2023/04/20/17/55/potatoes-7952746_1280.png" },
+  { id: 5, name: "Chilies", price: 1, image: "https://cdn.pixabay.com/photo/2017/03/28/12/10/chilli-2185656_1280.jpg" },
 ];
 
 export default function GroceryStore() {
   const [cart, setCart] = useState([]);
-  const [showForm, setShowForm] = useState(false);
-  const [orderSubmitted, setOrderSubmitted] = useState(false);
-  const [formData, setFormData] = useState({ name: "", address: "", phone: "" });
 
   const addToCart = (product) => {
     setCart((prev) => [...prev, product]);
@@ -23,26 +20,19 @@ export default function GroceryStore() {
     setCart((prev) => prev.filter((p, i) => i !== prev.indexOf(product)));
   };
 
-  const handleOrderSubmit = (e) => {
-    e.preventDefault();
-    setOrderSubmitted(true);
-    setShowForm(false);
-    setCart([]);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-green-600 shadow p-4 flex justify-between items-center sticky top-0 z-10">
-        <h1 className="text-2xl font-bold text-white">My Grocery</h1>
+      <header className="bg-white shadow p-4 flex justify-between items-center sticky top-0 z-10">
+        <h1 className="text-2xl font-bold">My Grocery</h1>
         <div className="flex items-center gap-4">
           <input
             type="text"
             placeholder="Search..."
-            className="border border-green-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-green-400"
+            className="border rounded px-2 py-1"
           />
           <div className="relative">
-            <ShoppingCart className="w-6 h-6 text-white" />
+            <ShoppingCart className="w-6 h-6" />
             {cart.length > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
                 {cart.length}
@@ -78,11 +68,11 @@ export default function GroceryStore() {
         ))}
       </main>
 
-      {/* Cart Section */}
+      {/* Cart (Optional section to display items) */}
       {cart.length > 0 && (
         <section className="p-4">
           <h2 className="text-xl font-semibold mb-2">Cart</h2>
-          <ul className="bg-white rounded shadow p-4 mb-4">
+          <ul className="bg-white rounded shadow p-4">
             {cart.map((item, index) => (
               <li key={index} className="flex justify-between mb-2">
                 <span>{item.name}</span>
@@ -95,58 +85,6 @@ export default function GroceryStore() {
               </li>
             ))}
           </ul>
-          <button
-            onClick={() => setShowForm(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Place Order
-          </button>
-        </section>
-      )}
-
-      {/* Order Form */}
-      {showForm && (
-        <section className="p-4 bg-white shadow rounded max-w-md mx-auto">
-          <h2 className="text-lg font-semibold mb-4">Enter Your Information</h2>
-          <form onSubmit={handleOrderSubmit} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Your Name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full border rounded px-3 py-2"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Phone Number"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full border rounded px-3 py-2"
-              required
-            />
-            <textarea
-              placeholder="Delivery Address"
-              value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              className="w-full border rounded px-3 py-2"
-              required
-            ></textarea>
-            <button
-              type="submit"
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-            >
-              Submit Order
-            </button>
-          </form>
-        </section>
-      )}
-
-      {/* Confirmation Message */}
-      {orderSubmitted && (
-        <section className="p-4 text-center">
-          <h2 className="text-2xl font-semibold text-green-700 mb-2">Thank you for your order!</h2>
-          <p>We will contact you soon to confirm your delivery.</p>
         </section>
       )}
     </div>
